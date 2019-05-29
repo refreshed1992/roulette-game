@@ -23,19 +23,20 @@ public class GameEngineImpl implements GameEngine
 	private ArrayList<Player> players;
 	private HashMap<Integer, Slot> wheelSlots;
 	private ArrayList<GameEngineCallback> callbacks;
-
+	private Random random;
+	
 	public GameEngineImpl() 
 	{
 		wheelSlots = buildWheel();
 		players = new ArrayList<Player>();
 		callbacks = new ArrayList<GameEngineCallback>();
+		random = new Random();
 	}
 	
 	@Override
 	public void spin(int initialDelay, int finalDelay, int delayIncrement) 
 	{
 		// select a random slot (ball enters the wheel here)
-		Random random = new Random();
 		int key = random.nextInt(Slot.WHEEL_SIZE);
 		Slot startingSlot = wheelSlots.get(key);
 		
@@ -45,7 +46,10 @@ public class GameEngineImpl implements GameEngine
 			initialDelay += delayIncrement;	
 			
 			// call nextSlot each time a new slot is passed 
-			callbacks.get(0).nextSlot(startingSlot, this);
+			for(GameEngineCallback g : callbacks)
+			{
+				g.nextSlot(startingSlot, this);
+			}
 					
 			// increment the slot each iteration
 			key += 1;
@@ -65,8 +69,12 @@ public class GameEngineImpl implements GameEngine
 				e.printStackTrace();
 			};
 		}		
+		
 		// log final player point balances
-		callbacks.get(0).result(startingSlot, this);
+		for(GameEngineCallback g : callbacks)
+		{
+			g.result(startingSlot, this);
+		}
 	}
 
 	@Override
@@ -108,7 +116,7 @@ public class GameEngineImpl implements GameEngine
 		for ( Player player : players )
 		{
 			// return player if playerId matches
-			if ( player.getPlayerId() == id )
+			if ( player.getPlayerId().equals(id) )
 			{
 				return player;
 			}

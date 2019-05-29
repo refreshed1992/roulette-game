@@ -58,6 +58,6 @@ public enum BetType
 	    		  player.setPoints(player.getPoints() - player.getBet());
 	    	  }
 	   }   
-};
+   };
    public abstract void applyWinLoss(Player player, Slot winSlot);
 }
